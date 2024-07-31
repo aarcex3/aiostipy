@@ -6,11 +6,10 @@ from aiostipy.core.container import AppContainer
 
 
 class Application:
-    _app: web.Application
 
     @classmethod
-    def create(self, module: Type[Any]) -> web.Application:
-        self._app: web.Application = web.Application()
+    def create(self, module: Type[Any], *args, **kwargs) -> web.Application:
+        self._app: web.Application = web.Application(*args, **kwargs)
         container: AppContainer = AppContainer()
 
         for provider in getattr(module, "_providers", []):
@@ -20,6 +19,4 @@ class Application:
             instance = container.resolve(controller)
             for routes in getattr(instance, "_routes", []):
                 self._app.router.add_routes(routes)
-
-    def run(self, *args, **kwargs):
-        web.run_app(self._app, *args, **kwargs)
+        return self._app

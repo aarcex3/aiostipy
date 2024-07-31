@@ -16,6 +16,8 @@ pytest-aiohttp = "^1.0.5"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.2"
 pytest-sugar = "^1.0.0"
+click = "^8.1.7"
+black = "^24.4.2"
 
 [build-system]
 requires = ["poetry-core"]

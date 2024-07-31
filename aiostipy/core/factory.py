@@ -12,6 +12,3 @@ class AppFactory:
     def create(self, module: Type[Any]):
         self._app = Application.create(module)
         return self._app
-
-    def run(self, *args, **kwargs):
-        web.run_app(self._app, *args, **kwargs)
