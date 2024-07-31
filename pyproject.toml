@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "aiostipy"
-version = "0.1.0"
+version = "0.0.0"
 description = "A python framework build on top of aiohttp with a Nestjs like architecture"
 authors = ["Agustin Arce <agustinarceprincich@gmail.com>"]
 license = "Apache 2.0"
