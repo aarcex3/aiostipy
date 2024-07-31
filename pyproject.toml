@@ -1,15 +1,16 @@
 [tool.poetry]
 name = "aiostipy"
 version = "0.1.0"
-description = "A simple framework based on aiohttp inspired by Nestjs modular architecture"
+description = "A python framework build on top of aiohttp with a Nestjs like architecture"
 authors = ["Agustin Arce <agustinarceprincich@gmail.com>"]
-license = "MIT"
+license = "Apache 2.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
 aiohttp = "^3.9.5"
 typing-extensions = "^4.12.2"
+pytest-aiohttp = "^1.0.5"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -2,9 +2,8 @@ import json
 from typing import Any, Optional
 
 from aiohttp.typedefs import LooseHeaders
+from aiohttp.web import Request, Response
 from multidict import CIMultiDict
-
-from aiostipy.datastructures import Response
 
 
 class JSONResponse(Response):
