@@ -17,7 +17,7 @@ class AppContainer:
         self._providers = {}
 
     def register(self, provider: Type[Any]):
-        self._providers[provider] = provider()
+        self._providers[provider.__hash__] = provider
 
     def resolve(self, provider: Type[Any]) -> Any:
-        return self._providers[provider]
+        return self._providers[provider.__hash__]()
