@@ -1,23 +1,12 @@
-from typing import Any, Type
+from typing import Any, List, Optional, Type
+
+from opyoid import AbstractModule, Injector
 
 
-class AppContainer:
-    """
-    Container class definition
-    """
+class AppContainer(Injector):
 
-    _instance = None
+    def __init__(self, modules: Optional[List[AbstractModule | type[AbstractModule]]]):
+        super().__init__(modules)
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(AppContainer, cls).__new__(cls)
-        return cls._instance
-
-    def __init__(self):
-        self._providers = {}
-
-    def register(self, provider: Type[Any]):
-        self._providers[provider.__hash__] = provider
-
-    def resolve(self, provider: Type[Any]) -> Any:
-        return self._providers[provider.__hash__]()
+    def get_module(self, client: Type[Any]) -> Any:
+        return self.inject(client)

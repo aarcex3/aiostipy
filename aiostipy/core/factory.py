@@ -1,6 +1,6 @@
-from typing import Any, Type
+import asyncio
 
-from aiohttp import web
+import uvloop
 
 from aiostipy.core.applications import Application
 
@@ -8,6 +8,7 @@ from aiostipy.core.applications import Application
 class AppFactory:
 
     @classmethod
-    def create(cls, module: Type[Any]):
-        cls._app = Application.create(module)
+    def create(cls, module):
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+        cls._app = Application.create([module])
         return cls._app

@@ -1,12 +1,13 @@
-import json
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
+import msgspec
 from aiohttp.typedefs import LooseHeaders
-from aiohttp.web import Request, Response
+from aiohttp.web import Response
 from multidict import CIMultiDict
 
 
 class JSONResponse(Response):
+
     def __init__(
         self,
         data: Any = None,
@@ -16,15 +17,12 @@ class JSONResponse(Response):
         headers: Optional[LooseHeaders] = None,
         content_type: str = "application/json",
         charset: Optional[str] = "utf-8",
-        dumps: Optional[callable] = json.dumps,
+        dumps: Callable = msgspec.json.encode,
     ) -> None:
         if headers is None:
             headers = CIMultiDict()
 
-        if data is not None:
-            body = dumps(data).encode(charset)
-        else:
-            body = None
+        body = dumps(data) if data is not None else None
 
         super().__init__(
             body=body,

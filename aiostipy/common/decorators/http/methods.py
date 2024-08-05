@@ -4,68 +4,87 @@ Definition of http methods decorators
 
 from typing import Optional
 
-from aiohttp import web
-from aiohttp.web_routedef import RouteDef
 
+def Get(path: Optional[str] = "/"):
 
-def Get(path: Optional[str] = "/", **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.get(path=path, handler=func, **kwargs)
-
-    return wrapper
-
-
-def Post(path: Optional[str] = "/", **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.post(path=path, handler=func, **kwargs)
+    def wrapper(func):
+        func.method = "GET"
+        func.path = path
+        return func
 
     return wrapper
 
 
-def Put(path: Optional[str] = "/", **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.put(path=path, handler=func, **kwargs)
+def Post(path: Optional[str] = "/"):
+
+    def wrapper(func):
+        func.method = "POST"
+        func.path = path
+        return func
 
     return wrapper
 
 
-def Delete(path: Optional[str] = "/", **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.delete(path=path, handler=func, **kwargs)
+def Put(path: Optional[str] = "/"):
+    def wrapper(func):
+        func.method = "PUT"
+        func.path = path
+        return func
 
     return wrapper
 
 
-def Head(path: Optional[str] = "/", **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.head(path=path, handler=func, **kwargs)
+def Delete(path: Optional[str] = "/"):
+    def wrapper(func):
+        func.method = "DELETE"
+        func.path = path
+        return func
 
     return wrapper
 
 
-def Options(path: Optional[str] = "/", **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.options(path=path, handler=func, **kwargs)
+def Head(path: Optional[str] = "/"):
+    def wrapper(func):
+        func.method = "HEAD"
+        func.path = path
+        return func
 
     return wrapper
 
 
-def Patch(path: Optional[str] = "/", **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.patch(path=path, handler=func, **kwargs)
+def Options(path: Optional[str] = "/"):
+    def wrapper(func):
+        func.method = "OPTIONS"
+        func.path = path
+        return func
 
     return wrapper
 
 
-def Static(path: Optional[str] = "/", **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.static(path=path, handler=func, **kwargs)
+def Patch(path: Optional[str] = "/"):
+    def wrapper(func):
+        func.method = "PATCH"
+        func.path = path
+        return func
 
     return wrapper
 
 
-def View(path: str, **kwargs):
-    def wrapper(func) -> RouteDef:
-        return web.view(path=path, handler=func, **kwargs)
+def Static(path: Optional[str] = "/"):
+    def wrapper(func):
+        func.method = "STATIC"
+        func.path = path
+        return func
+
+    return wrapper
+
+
+def View(
+    path: str,
+):
+    def wrapper(func):
+        func.method = "VIEW"
+        func.path = path
+        return func
 
     return wrapper
