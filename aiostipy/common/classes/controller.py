@@ -3,4 +3,4 @@ from typing import Optional
 
 class Controller:
 
-    prefix: Optional[str]
+    prefix: Optional[str] = "/"

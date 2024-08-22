@@ -1,4 +1,6 @@
-class Service:
-    """Work in progress"""
+from opyoid import SingletonScope
+from opyoid.scopes import Scope
 
-    pass
+
+class Service:
+    scope: type[Scope] = SingletonScope
