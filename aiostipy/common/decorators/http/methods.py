@@ -6,7 +6,7 @@ from functools import wraps
 from typing import Any, Callable, Dict, Optional, Tuple, Type, Union
 
 import msgspec
-from aiohttp import web
+from aiohttp import hdrs, web
 from aiohttp.web import Request as Request
 from aiohttp.web import Response as Response
 from aiohttp_extracts import Parameter
@@ -86,7 +86,13 @@ def handle_response(
 
 
 def route_decorator(method: str):
-    def decorator(path: Optional[str] = "/") -> Callable:
+    def decorator(
+        path: Optional[str] = "/",
+        description: Optional[str] = None,
+        summary: Optional[str] = None,
+        responses: Dict[int, str] = None,
+        deprecated: bool = False,
+    ) -> Callable:
         def wrapper(func: Callable) -> Callable:
             @wraps(func)
             async def wrapped(
@@ -104,6 +110,10 @@ def route_decorator(method: str):
 
             wrapped.method = method
             wrapped.path = path
+            wrapped.description = description
+            wrapped.summary = summary
+            wrapped.responses = responses
+            wrapped.deprecated = deprecated
             return wrapped
 
         return wrapper
@@ -111,7 +121,10 @@ def route_decorator(method: str):
     return decorator
 
 
-Get = route_decorator("GET")
-Post = route_decorator("POST")
-Put = route_decorator("PUT")
-Delete = route_decorator("DELETE")
+Get = route_decorator(hdrs.METH_GET)
+Post = route_decorator(hdrs.METH_POST)
+Put = route_decorator(hdrs.METH_PUT)
+Delete = route_decorator(hdrs.METH_DELETE)
+Head = route_decorator(hdrs.METH_HEAD)
+Options = route_decorator(hdrs.METH_OPTIONS)
+Trace = route_decorator(hdrs.METH_TRACE)
