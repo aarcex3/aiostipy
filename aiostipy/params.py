@@ -1,6 +1,7 @@
+from typing import Any
+
 from aiohttp import web
 from aiohttp_extracts import Cookie as Cookie
-from aiohttp_extracts import Header as Header
 from aiohttp_extracts import MatchInfo as Param
 from aiohttp_extracts import Parameter
 from aiohttp_extracts import QueryAttr as Query
@@ -18,6 +19,8 @@ class File(Parameter):
 
     @classmethod
     async def extract(cls, request: web.Request, name: str) -> "File":
+        if cls.name:
+            name = cls.name
         reader = await request.multipart()
 
         async for part in reader:
@@ -31,3 +34,37 @@ class File(Parameter):
                 )
 
         return None
+
+
+class Header(Parameter):
+
+    @classmethod
+    async def extract(cls, name: str, request: web.Request) -> str:
+        if cls.name:
+            name = cls.name
+        name = (
+            name.capitalize()
+            if len(name) == 1
+            else "-".join(word.capitalize() for word in name.split("_"))
+        )
+        return request.headers.get(name)
+
+
+class Query(Parameter):
+
+    @classmethod
+    async def extract(cls, name: str, request: web.Request) -> Any:
+        name = cls.name or name
+        value = request.query.get(name)
+
+        if value is None:
+            raise web.HTTPBadRequest(reason=f"Missing query parameter '{name}'.")
+        if cls.type:
+            try:
+                return cls.type(value)
+            except (ValueError, TypeError):
+                raise web.HTTPBadRequest(
+                    reason=f"Invalid type for query parameter '{name}'. Expected {cls.type.__name__}."
+                )
+
+        return value

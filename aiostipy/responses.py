@@ -82,7 +82,6 @@ class HTMLResponse(Response):
         if headers is None:
             headers = CIMultiDict()
 
-        # If data is provided, it will be the HTML body
         body = data.encode(charset) if data is not None else None
 
         super().__init__(
