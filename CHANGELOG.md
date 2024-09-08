@@ -1,5 +1,15 @@
 # Change log
 
+## 08/09/2024
+
+## Refactor
+
+- Parameters
+
+### Remove
+
+- **`aiohttp_extracts` integration**: Forked the original repo and fixed somes bugs
+
 ## 22/08/2024
 
 ### Added
@@ -17,7 +27,7 @@
   - `ORJSONResponse`
   - `HTMLResponse`
   - `RedirectResponse`
-  - These responses improve content handling and response formatting for various use cases. 
+  - These responses improve content handling and response formatting for various use cases.
   By default all response are JSONResponse.
 
 ### Improved

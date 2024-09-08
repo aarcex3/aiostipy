@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Optional
 
 from aiohttp import BasicAuth, hdrs, web
-from aiohttp_extracts import Parameter
+
+from .params import Parameter
 
 
 class HTTPBasicAuth(Parameter):
