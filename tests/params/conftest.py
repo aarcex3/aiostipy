@@ -29,6 +29,10 @@ class TestAppController(Controller):
         message = await request.json()
         return JSONResponse(message)
 
+    @Get("/get_path/{a}/{b}")
+    async def get_path(self, a: Path[int], b: Path[int]) -> Response:
+        return JSONResponse({"result": a + b})
+
 
 class TestAppModule(Module):
     controllers = [TestAppController]

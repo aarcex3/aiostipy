@@ -69,3 +69,25 @@ async def test_request(client):
     assert response.status == 200
     data = await response.json()
     assert data["test"] == "test"
+
+
+@pytest.mark.asyncio
+async def test_path(client):
+    response = await client.get(f"/get_path/{4}/{10}")
+    assert response.status == 200
+
+    json_data = await response.json()
+    assert json_data["result"] == 14
+
+
+@pytest.mark.asyncio
+async def test_path_invalid_type(client):
+    response = await client.get(f"/get_path/{4}/g")
+    assert response.status == 400
+    assert "Invalid type for path parameter 'b'. Expected int." in await response.text()
+
+
+@pytest.mark.asyncio
+async def test_path_missing_param(client):
+    response = await client.get(f"/get_path/{4}")
+    assert response.status == 404
