@@ -102,7 +102,7 @@ class Path(Parameter[T]):
                 )
 
 
-class Query(Parameter[str]):
+class Query(Parameter[T]):
     @classmethod
     async def extract(cls, request: web.Request, name: Optional[str] = None) -> T:
         value = request.query.get(name)
@@ -118,7 +118,7 @@ class Query(Parameter[str]):
                 )
 
 
-class RequestAttr(Parameter[Any]):
+class RequestAttr(Parameter[str]):
     name: Optional[str] = None
 
     @classmethod
