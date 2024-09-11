@@ -73,7 +73,11 @@ class Cookie(Parameter[str]):
     async def extract(
         cls, request: web.Request, name: Optional[str] = None
     ) -> Optional[str]:
-        return request.cookies.get(name)
+        cookie = request.cookies.get(name)
+        if cookie:
+            return cookie
+        else:
+            raise web.HTTPBadRequest(reason=f"Missing cookie '{name}'")
 
 
 class ReqBody(Parameter[Dict[str, Any]]):

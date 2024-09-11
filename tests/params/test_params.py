@@ -46,3 +46,18 @@ async def test_header_missing(client):
 
     assert response.status == 400
     assert "Missing header 'X-Custom'" in await response.text()
+
+
+@pytest.mark.asyncio
+async def test_get_cookie(client):
+    response = await client.get("/get_cookie", cookies={"my_cookie": "test-value"})
+    assert response.status == 200
+
+    json_data = await response.json()
+    assert json_data["cookie"] == "test-value"
+
+
+@pytest.mark.asyncio
+async def test_get_cookie_missing(client):
+    response = await client.get("/get_cookie", cookies={})
+    assert response.status == 400
