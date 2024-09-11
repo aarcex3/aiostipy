@@ -151,17 +151,24 @@ class File(Parameter[bytes]):
             reader: MultipartReader = await request.multipart()
 
             async for part in reader:
-                if isinstance(part, BodyPartReader):
-                    if getattr(part, "name", None) == name:
-                        filename = getattr(part, "filename", None)
-                        content = await part.read(decode=True)
-                        headers = getattr(part, "headers", {})
+                if (
+                    isinstance(part, BodyPartReader)
+                    and getattr(part, "name", None) == name
+                ):
+                    filename = getattr(part, "filename", None)
+                    content = await part.read(decode=True)
+                    headers = getattr(part, "headers", {})
 
-                        return cls(
-                            name=name,
-                            filename=filename,
-                            content=content,
-                            headers=headers,
-                        )
+                    return cls(
+                        name=name,
+                        filename=filename,
+                        content=content,
+                        headers=headers,
+                    )
+
+            raise web.HTTPBadRequest(reason=f"Missing file '{name}' in the request.")
+
         except Exception as e:
-            raise HTTPException(text=f"{e}") from e
+            raise web.HTTPBadRequest(
+                reason=f"Error while processing file '{name}': {str(e)}"
+            ) from e

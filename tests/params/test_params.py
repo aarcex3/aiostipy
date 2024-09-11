@@ -1,3 +1,5 @@
+import io
+
 import pytest
 from aiohttp import web
 
@@ -91,3 +93,24 @@ async def test_path_invalid_type(client):
 async def test_path_missing_param(client):
     response = await client.get(f"/get_path/{4}")
     assert response.status == 404
+
+
+@pytest.mark.asyncio
+async def test_file(client):
+
+    fake_file = io.BytesIO(b"This is a test file.")
+    fake_file.name = "test.txt"
+
+    data = {"file": fake_file}
+    response = await client.post("/post_file", data=data)
+    assert response.status == 200
+
+    json_data = await response.json()
+    assert json_data["filename"] == "test.txt"
+    assert json_data["content"] == "This is a test file."
+
+
+@pytest.mark.asyncio
+async def test_file_exception(client):
+    response = await client.post("/post_file")
+    assert response.status == 400

@@ -1,7 +1,8 @@
 import pytest
 
 from aiostipy import AppFactory, Controller, Get, Module, Request
-from aiostipy.params import Cookie, Header, Path, Query, ReqBody
+from aiostipy.common.decorators.http.methods import Post
+from aiostipy.params import Cookie, File, Header, Path, Query, ReqBody
 from aiostipy.responses import JSONResponse, Response
 
 
@@ -32,6 +33,12 @@ class TestAppController(Controller):
     @Get("/get_path/{a}/{b}")
     async def get_path(self, a: Path[int], b: Path[int]) -> Response:
         return JSONResponse({"result": a + b})
+
+    @Post("/post_file")
+    async def post_file(self, file: File) -> Response:
+        return JSONResponse(
+            {"filename": file.filename, "content": file.content.decode()}
+        )
 
 
 class TestAppModule(Module):
