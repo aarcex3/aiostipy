@@ -3,7 +3,7 @@ from __future__ import annotations
 import inspect
 import json
 from functools import wraps
-from typing import Any, Callable, Dict, Optional, Tuple, Type, Union
+from typing import Any, Awaitable, Callable, Dict, Optional, Tuple, Type, Union
 
 import msgspec
 from aiohttp import hdrs, web
@@ -13,7 +13,10 @@ from aiohttp.web import Response as Response
 from aiostipy.params import Parameter
 from aiostipy.responses import JSONResponse
 
-FunctionParams = Dict[str, Tuple[type, Optional[Any]]]
+FunctionParams = Dict[
+    str, Tuple[Union[Type[web.Request], Type[Parameter], Type[type]], Optional[Any]]
+]
+AsyncFunc = Callable[..., Awaitable[web.Response]]
 
 
 def fetch_fn_params(fn: Callable) -> FunctionParams:
@@ -54,9 +57,7 @@ async def handle_request(
         return deserialized_data
 
     async def wrapper(self, *args, **kwargs):
-        func_params: Dict[str, Tuple[Type, Any]] = fetch_fn_params(func)
-        path_params = request.match_info
-        kwargs.update(path_params)
+        func_params: FunctionParams = fetch_fn_params(func)
 
         for name, (type, default) in func_params.items():
             if isinstance(type, Type) and issubclass(type, web.Request):
@@ -66,7 +67,7 @@ async def handle_request(
             if isinstance(type, Type) and issubclass(type, Parameter):
                 kwargs[name] = await type.extract(name=name, request=request) or default
             else:
-                kwargs[name] = kwargs.get(name, None)
+                kwargs[name] = kwargs.get(name, default)
         return await func(self, *args, **kwargs)
 
     return wrapper
@@ -85,7 +86,7 @@ def handle_response(
         return JSONResponse(data=response)
 
 
-def route_decorator(method: str):
+def route_decorator(method: str) -> AsyncFunc:
     def decorator(
         path: Optional[str] = "/",
         description: Optional[str] = None,
