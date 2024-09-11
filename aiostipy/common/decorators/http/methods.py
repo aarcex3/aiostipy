@@ -9,8 +9,8 @@ import msgspec
 from aiohttp import hdrs, web
 from aiohttp.web import Request as Request
 from aiohttp.web import Response as Response
-from aiohttp_extracts import Parameter
 
+from aiostipy.params import Parameter
 from aiostipy.responses import JSONResponse
 
 FunctionParams = Dict[str, Tuple[type, Optional[Any]]]

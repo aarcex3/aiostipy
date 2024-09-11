@@ -27,6 +27,8 @@ pytest-sugar = "^1.0.0"
 click = "^8.1.7"
 black = "^24.4.2"
 
+pytest-aiohttp = "^1.0.5"
+pytest-asyncio = "^0.24.0"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

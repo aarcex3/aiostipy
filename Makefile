@@ -16,6 +16,7 @@ TEST_DIR := ./tests
 #Format the files
 format:
 	$(BLACK) $(SRC_DIR)
+	$(BLACK) $(TEST_DIR)
 
 # Clean target to delete __pycache__ directories
 clean:

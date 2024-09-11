@@ -1,5 +1,5 @@
 import inspect
-from typing import Callable, Optional
+from typing import Optional
 
 import msgspec
 import pytest
