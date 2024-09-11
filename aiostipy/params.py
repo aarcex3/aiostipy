@@ -13,36 +13,38 @@ T = TypeVar("T")
 
 
 class Parameter(ABC, Generic[T], metaclass=ParameterMeta):
-    name: Optional[str]
+    name: Optional[Type[str]]
     type: Optional[Type[T]]
 
     def __init__(
         self, name: Optional[str] = None, type: Optional[Type[T]] = None
     ) -> None:
-        self.name = name
-        self.type = type
+        self.name: str = name
+        self.type: Type[T] = type
 
     @classmethod
     @abstractmethod
-    async def extract(cls, request: web.Request, name: Optional[str] = None) -> T:
+    async def extract(
+        cls, request: web.Request, name: Optional[str] = None
+    ) -> Optional[T]:
         """
         Abstract class method to extract data from a request.
         This method should be implemented by subclasses.
         """
-        pass
 
     @staticmethod
-    def __parse_key(key: Union[str, type, Iterable]) -> Dict[str, Any]:
+    def __parse_key__(key: Union[str, type, Iterable]) -> Dict[str, Any]:
         """
         Parses the key to determine the name and type attributes.
         This is a static method as it doesn't rely on instance or class-level data.
         """
         params: Dict[str, Any] = {}
+
         if isinstance(key, str):
             params["name"] = key
-        elif isinstance(key, type):
+        if isinstance(key, type):
             params["type"] = key
-        elif isinstance(key, Iterable):
+        if isinstance(key, Iterable):
             params.update({k: v for k, v in zip(("name", "type"), key)})
         return params
 
@@ -71,8 +73,6 @@ class Cookie(Parameter[str]):
     async def extract(
         cls, request: web.Request, name: Optional[str] = None
     ) -> Optional[str]:
-        if cls.name:
-            name = cls.name
         return request.cookies.get(name)
 
 
@@ -87,14 +87,19 @@ class ReqBody(Parameter[Dict[str, Any]]):
             raise web.HTTPBadRequest(reason="Request body is missing.")
 
 
-class Path(Parameter[str]):
+class Path(Parameter[T]):
     @classmethod
     async def extract(
         cls, request: web.Request, name: Optional[str] = None
-    ) -> Optional[str]:
-        if cls.name:
-            name = cls.name
-        return request.match_info.get(name)
+    ) -> Optional[T]:
+        value = request.match_info.get(name)
+        if cls.type:
+            try:
+                return cls.type(value)
+            except (ValueError, TypeError):
+                raise web.HTTPBadRequest(
+                    reason=f"Invalid type for path parameter '{name}'. Expected {cls.type.__name__}."
+                )
 
 
 class Query(Parameter[str]):
@@ -106,13 +111,11 @@ class Query(Parameter[str]):
             raise web.HTTPBadRequest(reason=f"Missing query parameter '{name}'.")
         if cls.type:
             try:
-                return cls.type(value)  # Type conversion
+                return cls.type(value)
             except (ValueError, TypeError):
                 raise web.HTTPBadRequest(
                     reason=f"Invalid type for query parameter '{name}'. Expected {cls.type.__name__}."
                 )
-
-        return value
 
 
 class RequestAttr(Parameter[Any]):
@@ -120,8 +123,6 @@ class RequestAttr(Parameter[Any]):
 
     @classmethod
     async def extract(cls, request: web.Request, name: Optional[str] = None) -> Any:
-        if cls.name:
-            name = cls.name
         return request.get(name, None)
 
 
@@ -143,9 +144,6 @@ class File(Parameter[bytes]):
         cls, request: web.Request, name: Optional[str] = None
     ) -> Optional["File"]:
         try:
-            if cls.name:
-                name = cls.name
-
             reader: MultipartReader = await request.multipart()
 
             async for part in reader:
@@ -163,5 +161,3 @@ class File(Parameter[bytes]):
                         )
         except Exception as e:
             raise HTTPException(text=f"{e}") from e
-
-        return None
