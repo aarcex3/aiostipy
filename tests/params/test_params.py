@@ -28,3 +28,21 @@ async def test_query_param(client):
 async def test_query_param_wrong_type(client):
     resp = await client.get("/get_query", params={"a": "'3'", "b": 3})
     assert resp.status == 400
+
+
+@pytest.mark.asyncio
+async def test_header(client):
+    response = await client.get("/get_header", headers={"X-Custom": "test-value"})
+
+    assert response.status == 200
+
+    json_data = await response.json()
+    assert json_data["x_custom"] == "test-value"
+
+
+@pytest.mark.asyncio
+async def test_header_missing(client):
+    response = await client.get("/get_header")
+
+    assert response.status == 400
+    assert "Missing header 'X-Custom'" in await response.text()

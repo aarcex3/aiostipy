@@ -1,7 +1,7 @@
 import pytest
 
 from aiostipy import AppFactory, Controller, Get, Module
-from aiostipy.params import Query, ReqBody
+from aiostipy.params import Header, Query, ReqBody
 from aiostipy.responses import JSONResponse, Response
 
 
@@ -15,6 +15,10 @@ class TestAppController(Controller):
     @Get("/get_query")
     async def get_query(self, a: Query[int], b: Query[int]) -> Response:
         return JSONResponse({"result": a + b})
+
+    @Get("/get_header")
+    async def get_header(self, x_custom: Header["X-Custom"]) -> Response:
+        return JSONResponse({"x_custom": x_custom})
 
 
 class TestAppModule(Module):
