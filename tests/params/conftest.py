@@ -16,10 +16,6 @@ class TestAppController(Controller):
     async def get_query(self, a: Query[int], b: Query[int]) -> Response:
         return JSONResponse({"result": a + b})
 
-    @Get("/query_wrong_type")
-    async def get_query_wrong_type(self, a: Query[int], b: Query[int]) -> Response:
-        return JSONResponse({"result": a + b})
-
 
 class TestAppModule(Module):
     controllers = [TestAppController]
