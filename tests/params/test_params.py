@@ -61,3 +61,11 @@ async def test_get_cookie(client):
 async def test_get_cookie_missing(client):
     response = await client.get("/get_cookie", cookies={})
     assert response.status == 400
+
+
+@pytest.mark.asyncio
+async def test_request(client):
+    response = await client.get("/request", json={"test": "test"})
+    assert response.status == 200
+    data = await response.json()
+    assert data["test"] == "test"

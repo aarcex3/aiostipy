@@ -1,7 +1,7 @@
 import pytest
 
-from aiostipy import AppFactory, Controller, Get, Module
-from aiostipy.params import Cookie, Header, Query, ReqBody
+from aiostipy import AppFactory, Controller, Get, Module, Request
+from aiostipy.params import Cookie, Header, Path, Query, ReqBody
 from aiostipy.responses import JSONResponse, Response
 
 
@@ -23,6 +23,11 @@ class TestAppController(Controller):
     @Get("/get_cookie")
     async def get_cookie(self, my_cookie: Cookie) -> Response:
         return JSONResponse({"cookie": my_cookie})
+
+    @Get("/request")
+    async def get_request(self, request: Request) -> Response:
+        message = await request.json()
+        return JSONResponse(message)
 
 
 class TestAppModule(Module):
